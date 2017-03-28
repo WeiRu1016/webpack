@@ -2,38 +2,33 @@ var base = require('./webpack.base.config');
 var config = require('../config');
 var webpack = require('webpack');
 var merge = require('webpack-merge');
-var utils = require('./utils')
+var utils = require('./utils');
 
-var HtmlWebpackPlugin = require('html-webpack-plugin')
-// var FriendlyErrors = require('friendly-errors-webpack-plugin')
+var FriendlyErrors = require('friendly-errors-webpack-plugin');
 
-var ExtractTextPlugin = require('extract-text-webpack-plugin')
 var devConfig = {
     module: {
-        loaders: utils.styleLoaders({sourceMap: config.dev.cssSourceMap, extract: true})
+        rules: utils.styleLoaders({ sourceMap: config.dev.cssSourceMap, extract: true })
     },
-    devtool: 'eval-source-map',
+    devtool: '#eval-source-map',
     devServer: {
-        contentBase: './app',
+        contentBase: './',
         port: '8080',
         inline: true,
-        historyApiFallback: true
+        historyApiFallback: true,
+        quiet: true
     },
     plugins: [
-       new webpack.DefinePlugin({
-        'process.env': config.dev.env
+        new webpack.DefinePlugin({
+            'process.env': config.dev.env
         }),
-        new webpack.optimize.OccurrenceOrderPlugin(),
-        new webpack.HotModuleReplacementPlugin(),
-        new webpack.NoErrorsPlugin(),
+        // new webpack.optimize.OccurrenceOrderPlugin(),被默认加载
+        new webpack.HotModuleReplacementPlugin(),//热替换插件
+        // new webpack.NoErrorsPlugin(),//报错但不退出webpack进程
+        new webpack.NoEmitOnErrorsPlugin(),//替换NoErrorsPlugin
 
-        // new FriendlyErrors(),
-
-        new ExtractTextPlugin({
-            filename: utils.assetsPath('css/[name].[contenthash].css'), 
-            allChunks: true,
-            disable: false
-        })
+        new FriendlyErrors()
     ]
-}
+};
+
 module.exports = merge(base, devConfig);
